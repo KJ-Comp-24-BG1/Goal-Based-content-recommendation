@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Goal Based Course Recommendation</title>
+</head>
+<body>
+    <h1>Welcome to Goal Based Course Recommendation</h1>
+    <form method="post" action="{% url 'mainpage:index' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Get Recommendations</button>
+    </form>
+</body>
+</html>

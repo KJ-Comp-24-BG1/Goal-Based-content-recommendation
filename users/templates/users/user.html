@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .course-card {
+            margin-bottom: 20px;
+        }
+        .course-logo {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .course-details {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">BG1-KJcomp-2024</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">{{ request.user.username }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="mb-4">Welcome, {{ request.user.username }}!</h2>
+    
+    <h3>Enrolled Courses:</h3>
+    <div class="row">
+        {% for course in enrolled_courses %}
+        <div class="col-md-4">
+            <div class="card course-card">
+                <img src="{% static 'mainpage/images/' %}{{ course.platform }}.png" alt="{{ course.platform }} logo" class="card-img-top course-logo">
+                <div class="card-body course-details">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.platform }}</p>
+                    <a href="{{ course.link }}" class="btn btn-primary">Go to Course</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            <h5>No courses enrolled yet!</h5>
+            <p>{{ random_message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="mt-4">Find New Courses:</h3>
+    <form method="post" action="{% url 'users:user_page' %}" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Get Recommendations</button>
+    </form>
+
+    <div class="row">
+        {% for course in recommendations %}
+        <div class="col-md-4">
+            <div class="card course-card">
+                <img src="{% static 'mainpage/images/' %}{{ course.platform }}.png" alt="{{ course.platform }} logo" class="card-img-top course-logo">
+                <div class="card-body course-details">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description }}</p>
+                    <form method="post" action="{% url 'mainpage:add_course' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
